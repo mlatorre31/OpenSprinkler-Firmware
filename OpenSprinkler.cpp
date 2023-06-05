@@ -349,7 +349,7 @@ byte OpenSprinkler::iopts[] = {
 	150,// lcd contrast
 	100,// lcd backlight
 	15, // lcd dimming
-	80, // boost time (only valid to DC and LATCH type)
+	255, // boost time (only valid to DC and LATCH type)
 	0,  // weather algorithm (0 means not using weather algorithm)
 	0,  // this and the next three bytes define the ntp server ip
 	0,
@@ -977,7 +977,7 @@ void OpenSprinkler::begin() {
  */
 void OpenSprinkler::latch_boost() {
 	digitalWriteExt(PIN_BOOST, HIGH);      // enable boost converter
-	delay((int)iopts[IOPT_BOOST_TIME]<<2); // wait for booster to charge
+	delay(3500); // wait for booster to charge
 	digitalWriteExt(PIN_BOOST, LOW);       // disable boost converter
 }
 
@@ -1065,7 +1065,7 @@ void OpenSprinkler::latch_open(byte sid) {
 		digitalWriteExt(PIN_LATCH_COMA, HIGH); // enable COM+
 		latch_setzoneoutput_v2(sid, LOW, HIGH); // enable sid-
 		digitalWriteExt(PIN_BOOST_EN, HIGH); // enable output path
-		delay(150);
+		delay(250);
 		digitalWriteExt(PIN_BOOST_EN, LOW); // disabled output boosted voltage path
 		latch_disable_alloutputs_v2(); // disable all output pins
 	} else {
@@ -1074,7 +1074,7 @@ void OpenSprinkler::latch_open(byte sid) {
 		latch_setzonepin(sid, LOW); // set the specified switch to LOW
 		delay(1); // delay 1 ms for all gates to stablize
 		digitalWriteExt(PIN_BOOST_EN, HIGH); // dump boosted voltage
-		delay(100);                          // for 100ms
+		delay(250);                          // for 100ms
 		latch_setzonepin(sid, HIGH);  // set the specified switch back to HIGH
 		digitalWriteExt(PIN_BOOST_EN, LOW);  // disable boosted voltage
 	}
@@ -1088,7 +1088,7 @@ void OpenSprinkler::latch_close(byte sid) {
 		latch_setzoneoutput_v2(sid, HIGH, LOW); // enable sid+
 		digitalWriteExt(PIN_LATCH_COMK, HIGH); // enable COM-
 		digitalWriteExt(PIN_BOOST_EN, HIGH); // enable output path
-		delay(150);
+		delay(250);
 		digitalWriteExt(PIN_BOOST_EN, LOW); // disable output boosted voltage path
 		latch_disable_alloutputs_v2(); // disable all output pins
 	} else {
@@ -1097,7 +1097,7 @@ void OpenSprinkler::latch_close(byte sid) {
 		latch_setzonepin(sid, HIGH);// set the specified switch to HIGH
 		delay(1); // delay 1 ms for all gates to stablize
 		digitalWriteExt(PIN_BOOST_EN, HIGH); // dump boosted voltage
-		delay(100);                          // for 100ms
+		delay(250);                          // for 100ms
 		latch_setzonepin(sid, LOW);  // set the specified switch back to LOW
 		digitalWriteExt(PIN_BOOST_EN, LOW);  // disable boosted voltage
 		latch_setallzonepins(HIGH);  // set all switches back to HIGH

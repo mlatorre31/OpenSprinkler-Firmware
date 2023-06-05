@@ -706,8 +706,21 @@ void do_loop()
 			apply_monthly_adjustment(curr_time); // check and apply monthly adjustment here, if it's selected
 
 			// check through all programs
+			// Check weather 60s before program start:
 			for(pid=0; pid<pd.nprograms; pid++) {
 				pd.read(pid, &prog);	// todo future: reduce load time
+				if (prog.check_match(curr_time + 60))
+				{
+					// Check and update weather if weatherdata is older than 30min:
+					if (os.checkwt_success_lasttime && (!os.checkwt_lasttime || os.now_tz() > os.checkwt_lasttime + 30 * 60))
+					{
+						os.checkwt_lasttime = 0;
+						os.checkwt_success_lasttime = 0;
+						check_weather();
+					}
+					break;
+				}
+
 				if(prog.check_match(curr_time)) {
 					// program match found
 					// check and process special program command
